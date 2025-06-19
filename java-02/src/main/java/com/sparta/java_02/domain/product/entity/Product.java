@@ -1,4 +1,4 @@
-package com.sparta.java_02.domain.user.entity;
+package com.sparta.java_02.domain.product.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -20,34 +21,35 @@ import org.hibernate.annotations.UpdateTimestamp;
 @DynamicInsert
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class Product {
 
   @Builder
-  public User(String name, String email, String passwordHash) {
+  public Product(String name, String description, BigDecimal price, Integer stock) {
     this.name = name;
-    this.email = email;
-    this.passwordHash = passwordHash;
+    this.description = description;
+    this.price = price;
+    this.stock = stock;
   }
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false, length = 50)
   private String name;
 
-  @Column(nullable = false, unique = true)
-  private String email;
+  private String description;
 
-  @Column(nullable = false)
-  private String passwordHash;
+  private BigDecimal price;
+
+  private Integer stock;
 
   @CreationTimestamp
+  @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
+  @Column
   @UpdateTimestamp
   private LocalDateTime updateAt;
 
-  @Column(nullable = false)
-  private String phone;
+
 }

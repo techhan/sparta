@@ -1,10 +1,14 @@
-package com.sparta.java_02.domain.user.entity;
+package com.sparta.java_02.domain.category.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -20,34 +24,30 @@ import org.hibernate.annotations.UpdateTimestamp;
 @DynamicInsert
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class Category {
 
   @Builder
-  public User(String name, String email, String passwordHash) {
+  public Category(String name, Category parent) {
     this.name = name;
-    this.email = email;
-    this.passwordHash = passwordHash;
+    this.parent = parent;
   }
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false, length = 50)
   private String name;
 
-  @Column(nullable = false, unique = true)
-  private String email;
-
-  @Column(nullable = false)
-  private String passwordHash;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "parent_id")
+  @JsonBackReference
+  private Category parent;
 
   @CreationTimestamp
+  @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
+  @Column
   @UpdateTimestamp
   private LocalDateTime updateAt;
-
-  @Column(nullable = false)
-  private String phone;
 }

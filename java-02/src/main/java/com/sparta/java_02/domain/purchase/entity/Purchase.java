@@ -16,13 +16,16 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Table
+@Getter
 @Entity
 @DynamicInsert
 @DynamicUpdate
@@ -58,5 +61,11 @@ public class Purchase { // 주문
 
   @Column
   @UpdateTimestamp
-  private LocalDateTime updateAt;
+  private LocalDateTime updatedAt;
+
+  public void setStatus(PurchaseStatus status) {
+    if (!ObjectUtils.isEmpty(status)) {
+      this.status = status;
+    }
+  }
 }

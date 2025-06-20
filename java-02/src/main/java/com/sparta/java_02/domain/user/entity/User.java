@@ -1,14 +1,19 @@
 package com.sparta.java_02.domain.user.entity;
 
+import com.sparta.java_02.domain.purchase.entity.Purchase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
@@ -17,6 +22,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Table
 @Entity
+@Getter
 @DynamicInsert
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -46,8 +52,11 @@ public class User {
   private LocalDateTime createdAt;
 
   @UpdateTimestamp
-  private LocalDateTime updateAt;
+  private LocalDateTime updatedAt;
 
   @Column(nullable = false)
   private String phone;
+
+  @OneToMany(mappedBy = "user")
+  List<Purchase> purchases = new ArrayList<>();
 }

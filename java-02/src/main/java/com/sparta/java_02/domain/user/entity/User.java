@@ -19,6 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.util.StringUtils;
 
 @Table
 @Entity
@@ -59,4 +60,16 @@ public class User {
 
   @OneToMany(mappedBy = "user")
   List<Purchase> purchases = new ArrayList<>();
+
+  public void setName(String name) {
+    if (StringUtils.hasText(name)) {
+      this.name = name;
+    }
+  }
+
+  public void setEmail(String email) {
+    if (StringUtils.hasText(email)) {
+      this.email = email;
+    }
+  }
 }

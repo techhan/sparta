@@ -7,4 +7,12 @@ import lombok.Getter;
 @Getter
 @Builder
 public class UserSearchResponse {
+
+  private Long id;
+
+  private String name;
+
+  private String email;
+
+  //private LocalDateTime
 }

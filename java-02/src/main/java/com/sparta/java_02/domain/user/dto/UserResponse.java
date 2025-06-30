@@ -1,18 +1,35 @@
 package com.sparta.java_02.domain.user.dto;
 
 import java.time.LocalDateTime;
+
+import com.querydsl.core.annotations.QueryProjection;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 
 @Getter
-@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
 
-  private String id;
+  Long id;
 
-  private String name;
+  String name;
 
-  private String email;
+  String email;
 
-  private LocalDateTime createdDate;
+  LocalDateTime createdAt;
+
+  @QueryProjection
+  public UserResponse(
+          Long id,
+          String name,
+          String email,
+          LocalDateTime createdAt
+  ) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.createdAt = createdAt;
+  }
 }

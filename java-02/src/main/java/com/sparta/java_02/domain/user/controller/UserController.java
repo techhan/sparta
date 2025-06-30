@@ -1,6 +1,7 @@
 package com.sparta.java_02.domain.user.controller;
 
 
+import com.sparta.java_02.common.annotation.Loggable;
 import com.sparta.java_02.common.response.ApiResponse;
 import com.sparta.java_02.domain.user.dto.UserCreateRequest;
 import com.sparta.java_02.domain.user.dto.UserResponse;
@@ -26,6 +27,7 @@ public class UserController {
 
   private final UserService userService;
 
+  @Loggable
   @GetMapping
   public ApiResponse<Page<UserSearchResponse>> findAll() {
     return ApiResponse.success(userService.searchUser());

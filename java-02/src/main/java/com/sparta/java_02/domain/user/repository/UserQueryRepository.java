@@ -1,13 +1,13 @@
 package com.sparta.java_02.domain.user.repository;
 
 import static com.sparta.java_02.domain.purchase.entity.QPurchase.purchase;
-import static com.sparta.java_02.domain.domain.user.entity.QUser.user;
 import static com.sparta.java_02.domain.user.entity.QUser.user;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 
+import com.sparta.java_02.domain.user.dto.QUserResponse;
 import com.sparta.java_02.domain.user.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

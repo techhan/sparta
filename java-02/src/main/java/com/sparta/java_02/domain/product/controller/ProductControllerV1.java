@@ -19,10 +19,10 @@ public class ProductControllerV1 {
 
     private final ProductService productService;
 
-    @GetMapping
-    public ResponseEntity<String> findProduct() {
-        return ResponseEntity.ok("Hello world");
-    }
+//    @GetMapping
+//    public ResponseEntity<String> findProduct() {
+//        return ResponseEntity.ok("Hello world");
+//    }
 
     // 전체상품 조회
     @GetMapping
@@ -37,7 +37,7 @@ public class ProductControllerV1 {
 
     // 상품 생성
     @PostMapping
-    public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest reqeust) {
+    public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {
         // 201 Created 상태 코드와 함께 응답
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(productService.create(request));

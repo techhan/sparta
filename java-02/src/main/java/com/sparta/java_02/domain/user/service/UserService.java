@@ -10,7 +10,6 @@ import com.sparta.java_02.domain.user.entity.User;
 import com.sparta.java_02.domain.user.mapper.UserMapper;
 import com.sparta.java_02.domain.user.repository.UserQueryRepository;
 import com.sparta.java_02.domain.user.repository.UserRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;

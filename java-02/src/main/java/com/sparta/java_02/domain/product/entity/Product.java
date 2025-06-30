@@ -45,6 +45,8 @@ public class Product {
 
   private Integer stock;
 
+  private Long categoryId;
+
   @CreationTimestamp
   @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;

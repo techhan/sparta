@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
@@ -47,6 +48,7 @@ public class Purchase { // 주문
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
+  @Setter
   private BigDecimal totalPrice;
 
   @Enumerated(EnumType.STRING)

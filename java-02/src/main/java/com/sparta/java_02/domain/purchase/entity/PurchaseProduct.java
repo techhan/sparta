@@ -1,5 +1,6 @@
 package com.sparta.java_02.domain.purchase.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sparta.java_02.domain.product.entity.Product;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,42 +11,66 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Table
 @Entity
+@Getter
 @DynamicInsert
 @DynamicUpdate
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PurchaseProduct {
-
-  @Builder
-  public PurchaseProduct(Purchase purchase, Product product, LocalDateTime createdAt) {
-    this.purchase = purchase;
-    this.product = product;
-    this.createdAt = createdAt;
-  }
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  Long id;
 
+  @JsonBackReference
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "purchase_id", nullable = false)
-  private Purchase purchase;
+  Purchase purchase;
 
+  @JsonBackReference
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "product_id", nullable = false)
-  private Product product;
+  Product product;
 
-  @CreationTimestamp
+  @Column(nullable = false)
+  Integer quantity;
+
+  @Column(nullable = false)
+  BigDecimal price;
+
   @Column(nullable = false, updatable = false)
-  private LocalDateTime createdAt;
+  @CreationTimestamp
+  LocalDateTime createdAt;
+
+  @Column(nullable = false)
+  @UpdateTimestamp
+  LocalDateTime updatedAt;
+
+  @Builder
+  public PurchaseProduct(
+      Purchase purchase,
+      Product product,
+      Integer quantity,
+      BigDecimal price
+  ) {
+    this.purchase = purchase;
+    this.product = product;
+    this.quantity = quantity;
+    this.price = price;
+  }
 
 }

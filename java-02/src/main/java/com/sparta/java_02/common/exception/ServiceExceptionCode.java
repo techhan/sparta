@@ -12,7 +12,8 @@ public enum ServiceExceptionCode {
 
   NOT_FOUND_DATA("데이터를 찾을 수 없습니다."),
   NOT_FOUND_USER("유저를 찾을 수 없습니다."),
-  OUT_OF_STOCK_PRODUCT("상품 재고가 없습니다.");
+  OUT_OF_STOCK_PRODUCT("상품 재고가 없습니다."),
+  CANNOT_CANCEL("취소 불가능합니다.");
 
   final String message;
 }

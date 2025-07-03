@@ -73,4 +73,7 @@ public class PurchaseProduct {
     this.price = price;
   }
 
+  public void decreaseQuantity(int refundQuantity) {
+    
+  }
 }

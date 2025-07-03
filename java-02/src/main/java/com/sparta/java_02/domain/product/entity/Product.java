@@ -31,13 +31,11 @@ public class Product {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   Long id;
 
-  //TODO: 실습을  위해 임시로 주석처리
-  //@ManyToOne(fetch = FetchType.LAZY)
-  //@JoinColumn(name = "category_id")
-  //private Category category;
+//  //TODO: 실습을  위해 임시로 주석처리
+//  @ManyToOne
+//  @JoinColumn(name = "category_id")
+//  private Category category;
 
-  //TODO: 실습을 위한 임시 컬럼입니다. (실제론 이렇게 작업하면 안됩니다.)
-  @Column(nullable = false)
   Long categoryId;
 
   @Column(nullable = false)
@@ -77,5 +75,9 @@ public class Product {
 
   public void reduceStock(Integer quantity) {
     this.stock -= quantity;
+  }
+
+  public void increaseStock(Integer stock) {
+    this.stock += stock;
   }
 }

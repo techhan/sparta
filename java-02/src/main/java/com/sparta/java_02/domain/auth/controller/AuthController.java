@@ -6,65 +6,78 @@ import com.sparta.java_02.common.response.ApiResponse;
 import com.sparta.java_02.domain.auth.dto.LoginRequest;
 import com.sparta.java_02.domain.auth.dto.LoginResponse;
 import com.sparta.java_02.domain.auth.service.AuthService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.sparta.java_02.domain.user.dto.CustomUserDetails;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RestController //세션은 통신단의 역할임
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthService authService;
+  private final AuthService authService;
 
-    /**
-     * HttpSession는 HttpServletRequest안에서 세션 관련된 기능만 모아서 만들어놓은 객체이다.
-     */
+  @PostMapping("/login")
+  public ApiResponse<LoginResponse> login(HttpSession httpSession,
+      @Valid @RequestBody LoginRequest loginRequest) {
+    LoginResponse loginResponse = authService.login(loginRequest);
 
-    @PostMapping("/login")
-    public ApiResponse<LoginResponse> login( HttpSession session,
-            @Valid @RequestBody LoginRequest request) {
+    // 세션에 사용자 정보 저장
+    httpSession.setAttribute("userId", loginResponse.getUserId());
+    httpSession.setAttribute("email", loginResponse.getEmail());
 
-        LoginResponse loginResponse = authService.login(request);
+    log.info("session id : {}", httpSession.getId());
 
-        session.setAttribute("userId", loginResponse.getUserId()); // setAttribute()하면 바로 세션 만들어짐.. (정상 응답 시)
-        session.setAttribute("name", loginResponse.getName());
-        session.setAttribute("email", loginResponse.getEmail());
+    return ApiResponse.success(loginResponse);
+  }
 
-        log.info("session id : {}", session.getId()); // 실제 클라이언트 쪽 ID
+  @GetMapping("/status")
+  public ApiResponse<LoginResponse> checkStatus(HttpSession httpSession) {
+    // Spring Security 인증 정보 확인 (필터에서 이미 검증됨)
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        return ApiResponse.success(authService.login(request));
+    if (authentication != null && authentication.isAuthenticated() &&
+        !"anonymousUser" .equals(authentication.getPrincipal())) {
+
+      // Spring Security 인증 정보에서 사용자 정보 추출
+      String email = authentication.getName();
+      if (authentication.getPrincipal() instanceof CustomUserDetails) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ApiResponse.success(
+            authService.getLoginResponse(userDetails.getUser().getId(), email));
+      }
     }
 
-//    @PostMapping("/login")
-//    public ApiResponse<Void> loginQueryString(LoginRequest request1, LoginRequest request2, Pageable pageable) {
-//        // localhost:8080/api/auth?email=abc@naver.com&name=1234&email=abc@naver.com&name=1234
-//        return ApiResponse.success();
-//    }
+    // 세션에서 사용자 정보 확인 (필터에서 이미 검증됨)
+    Long userId = (Long) httpSession.getAttribute("userId");
+    String email = (String) httpSession.getAttribute("email");
 
-    @GetMapping("/status")
-    public ApiResponse<LoginResponse> getStatus(HttpSession session) {
-        Long userId = (Long) session.getAttribute("userId");
-        String name = (String) session.getAttribute("name");
-        String email = (String) session.getAttribute("email");
-
-//        if(ObjectUtils.isEmpty(userId) && ObjectUtils.isEmpty(name) && ObjectUtils.isEmpty(email)) {
-//            throw new ServiceException(ServiceExceptionCode.NOT_FOUND_DATA);
-//        }
-
-        return ApiResponse.success(authService.getLoginResponse(userId ,name, email));
+    if (ObjectUtils.isEmpty(userId) && ObjectUtils.isEmpty(email)) {
+      throw new ServiceException(ServiceExceptionCode.NOT_FOUND_USER);
     }
 
-    @GetMapping("/logout")
-    public ApiResponse<Void> logout(HttpSession session) {
-        session.invalidate();
-        return ApiResponse.success();
-    }
+    return ApiResponse.success(authService.getLoginResponse(userId, email));
+  }
+
+  @GetMapping("/logout")
+  public ApiResponse<Void> logout(HttpSession httpSession) {
+    // Spring Security 컨텍스트 클리어
+    authService.logout();
+
+    // 세션 무효화
+    httpSession.invalidate();
+
+    return ApiResponse.success();
+  }
 }

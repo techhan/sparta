@@ -8,40 +8,50 @@ import com.sparta.java_02.domain.user.entity.User;
 import com.sparta.java_02.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
-import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final AuthenticationManager authenticationManager;
 
-    @Transactional// 이거 붙이면 동시성을 해결할 수도 있음
-    public LoginResponse login(LoginRequest loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_USER));
+  @Transactional
+  public LoginResponse login(LoginRequest loginRequest) {
+    User user = userRepository.findByEmail(loginRequest.getEmail())
+        .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_USER));
 
-        // 패스워드 검증
-        return LoginResponse.builder()
-                .userId(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .build();
+    if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
+      throw new ServiceException(ServiceExceptionCode.NOT_FOUND_USER);
     }
 
-    public LoginResponse getLoginResponse(Long userId, String name, String email) {
+    Authentication authentication = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+    );
 
-        if(ObjectUtils.isEmpty(userId) && ObjectUtils.isEmpty(name) && ObjectUtils.isEmpty(email)) {
-            throw new ServiceException(ServiceExceptionCode.NOT_FOUND_DATA);
-        }
+    SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return LoginResponse.builder()
-                .userId(userId)
-                .name(name)
-                .email(email)
-                .build();
-    }
+    return LoginResponse.builder()
+        .userId(user.getId())
+        .email(loginRequest.getEmail())
+        .build();
+  }
 
+  public LoginResponse getLoginResponse(Long userId, String email) {
+    return LoginResponse.builder()
+        .userId(userId)
+        .email(email)
+        .build();
+  }
+
+  public void logout() {
+    SecurityContextHolder.clearContext();
+  }
 }

@@ -12,9 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LoginResponse {
 
-    Long userId;
+  Long userId;
 
-    String name;
-
-    String email;
+  String email;
 }

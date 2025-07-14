@@ -44,7 +44,10 @@ logging:
     locations: classpath:db/migration #마이그레이션 SQL 파일이 위치할 경로
     baseline-on-migrate: true # 기존에 테이블이 있는 DB에 Flayway를 처음 적용할 때 사용
 
-# 내장 웹 서버 설정
-server:
-  port: 8080
+  # 내장 웹 서버 설정
+  server:
+    port: 8080
 
+  springdoc:
+    swagger-ui:
+      enabled: true

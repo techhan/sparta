@@ -97,4 +97,15 @@ public class UserService {
       ps.setString(3, user.getPasswordHash());
     });
   }
+
+  @Transactional
+  public void bulkInsertUsers(List<User> users) {
+    String sql = "INSERT INTO user (name, email, password_hash) VALUES (?, ?, ?)";
+
+    jdbcTemplate.batchUpdate(sql, users, 1000, (ps, user) -> {
+      ps.setString(1, user.getName());
+      ps.setString(2, user.getEmail());
+      ps.setString(3, user.getPasswordHash());
+    });
+  }
 }

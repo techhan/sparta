@@ -13,5 +13,7 @@ public interface UserMapper {
 
   UserSearchResponse toSearch(User user);
 
-  //User toEntity(UserCreateRequest request);
+    User toEntity(UserCreateRequest request);
+
+    //User toEntity(UserCreateRequest request);
 }

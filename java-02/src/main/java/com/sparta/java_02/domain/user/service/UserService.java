@@ -10,10 +10,14 @@ import com.sparta.java_02.domain.user.entity.User;
 import com.sparta.java_02.domain.user.mapper.UserMapper;
 import com.sparta.java_02.domain.user.repository.UserQueryRepository;
 import com.sparta.java_02.domain.user.repository.UserRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,8 +25,10 @@ public class UserService {
 
   private final UserMapper userMapper;
 
+  private final EntityManager entityManager;
   private final UserRepository userRepository;
   private final UserQueryRepository userQueryRepository;
+  private final JdbcTemplate jdbcTemplate;
 
   @Transactional
   public Page<UserSearchResponse> searchUser() {
@@ -36,11 +42,7 @@ public class UserService {
 
   @Transactional
   public void create(UserCreateRequest request) {
-    //User user = userMapper.toEntity(request); // < --- 여기
-    // 여기까지 : 비영속
-
-    // userRepository.save(user); // <-- 여기
-    // 여기부터 : 영속 상태
+    userRepository.save(userMapper.toEntity(request));
 
   } // 끝나면서 DB 퀄리 날림 & 준영속
 
@@ -65,5 +67,34 @@ public class UserService {
             .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_USER));
   }
 
+  @Transactional
+  public void saveAllUsers(List<User> users) {
+//    int batchSize = 1000;
+//
+//    for(int i = 0; i < users.size(); i++) {
+//      User user = users.get(i);
+//      entityManager.persist(user);
+//
+//      // flush()
+//      if((i + 1) % batchSize == 0) {
+//        entityManager.flush();
+//        entityManager.clear();
+//      }
+//    }
+//
+//    entityManager.flush();
+//    entityManager.clear();
+    userRepository.saveAll(users);
+  }
 
+  @Transactional
+  public void saveAllUser(List<User> users) {
+    String sql = "INSERT INTO user(name, email, password_hash) VALUES (?, ?, ?)";
+
+    jdbcTemplate.batchUpdate(sql, users, 1000, (ps, user) -> {
+      ps.setString(1, user.getName());
+      ps.setString(2, user.getEmail());
+      ps.setString(3, user.getPasswordHash());
+    });
+  }
 }

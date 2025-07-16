@@ -23,6 +23,8 @@ spring:
         # sql 로깅을 위해 추가
         format_sql: true
         highlight_sql: true
+        jdbc:
+          batch_size: 1000
 
   #redis
   data:

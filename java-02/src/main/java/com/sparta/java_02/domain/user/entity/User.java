@@ -19,6 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Table
@@ -37,7 +38,7 @@ public class User {
   }
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
 
   @Column(nullable = false, length = 50)
@@ -72,4 +73,5 @@ public class User {
       this.email = email;
     }
   }
+
 }

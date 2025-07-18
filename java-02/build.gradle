@@ -50,6 +50,9 @@ dependencies {
     // QueryDSL JPA 라이브러리
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 
+    // myBatis
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+
     // QueryDSL 어노테이션 프로세서 (Q클래스 생성)
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
